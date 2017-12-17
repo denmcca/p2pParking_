@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1064098718538",
+    "firebase_url": "https://p2pparking343.firebaseio.com",
+    "project_id": "p2pparking343",
+    "storage_bucket": "p2pparking343.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1064098718538:android:8d2dd6dd16904e16",
+        "android_client_info": {
+          "package_name": "me.pgp378.p2pparking"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1064098718538-bop6baeshefm8i4i6sg9gpdr76jnupr8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "me.pgp378.p2pparking",
+            "certificate_hash": "d594f56299fd3d83d7c0ac408bae309632e0c295"
+          }
+        },
+        {
+          "client_id": "1064098718538-elqb981ohh2i53hc8s4cl75gqa76o6m0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBsH2UQlTDKQsqJvZaToXJqKMxtXMkpsVs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1064098718538-elqb981ohh2i53hc8s4cl75gqa76o6m0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

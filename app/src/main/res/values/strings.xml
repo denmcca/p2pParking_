@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">p2pParking</string>
+    <string name="title_activity_driver_map">Find Parking</string>
+    <string name="title_activity_student_map">Get A Ride</string>
+</resources>
