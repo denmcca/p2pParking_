@@ -21,8 +21,8 @@
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#ffffff"
         android:hint="password"
+        android:background="#ffffff"
         android:layout_margin="5dp"
         android:padding="10dp"
         android:minHeight="20pt" />
@@ -36,4 +36,11 @@
         android:layout_height="wrap_content"
         android:text="registration"
         android:id="@+id/registration" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitEnd"
+        app:srcCompat="@drawable/logo_new" />
 </LinearLayout>
