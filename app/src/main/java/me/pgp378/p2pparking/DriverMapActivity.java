@@ -307,7 +307,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         super.onStop();
         System.out.println("completed super.onStop");
 
-        if(!isLoggingOut) {
+        if(!isLoggingOut) { //test
             disconnectDriver();
         }
     }
