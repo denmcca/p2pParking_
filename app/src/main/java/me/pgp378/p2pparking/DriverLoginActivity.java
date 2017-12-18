@@ -16,7 +16,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
+/*
+/Login system for user acting as driver.
+ */
 public class DriverLoginActivity extends AppCompatActivity {
     private EditText mEmail, mPassword;
     private Button mLogin, mRegistration;
@@ -26,6 +28,9 @@ public class DriverLoginActivity extends AppCompatActivity {
 
     private Boolean loginAttempt = false;
 
+    /*
+    /initializes when activity is called.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +42,9 @@ public class DriverLoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        /*
+        /Initializes Authorization listener for firebase
+         */
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -61,6 +69,11 @@ public class DriverLoginActivity extends AppCompatActivity {
         mLogin = (Button) findViewById(R.id.login);
         mRegistration = (Button) findViewById(R.id.registration);
 
+        /*
+        /When register button is tapped.
+        /Takes user inputs and attempts to add to the firebase database.
+        /If add is successful, logs user in and opens map activity.
+         */
         mRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,6 +118,11 @@ public class DriverLoginActivity extends AppCompatActivity {
             }
         });
 
+        /*
+        /Activates when login button is tapped.
+        /Takes user inputs and checks credentials against the firebase database.
+        /If matching credentials are found, user is logged in to map activity.
+         */
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,7 +134,7 @@ public class DriverLoginActivity extends AppCompatActivity {
 
                 loginAttempt = true;
 
-                if (temp_email.matches("")) {
+                if (temp_email.matches("") || temp_password.length() < 1) {
                     Toast.makeText(DriverLoginActivity.this, "invalid email entered", Toast.LENGTH_SHORT).show();
                     Toast.makeText(DriverLoginActivity.this, "try again", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(DriverLoginActivity.this, DriverLoginActivity.class);
@@ -140,20 +158,28 @@ public class DriverLoginActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    /Turns on firebase listener
+     */
     @Override
     protected  void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(firebaseAuthListener);
     }
 
+    /*
+    /Turns off firebase listener
+     */
     @Override
     protected void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(firebaseAuthListener);
     }
 
+    /*
+    /Back button functionality.
+     */
     private long backPressedTime;
-
     @Override
     public void onBackPressed() {
         if (backPressedTime + 2000 > System.currentTimeMillis()) {

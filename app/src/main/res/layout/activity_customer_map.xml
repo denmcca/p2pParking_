@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="me.pgp378.p2pparking.CustomerMapActivity"
+    tools:context="me.pgp378.p2pparking.StudentMapActivity"
     android:background="#ffd918" >
 
     <Button

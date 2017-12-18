@@ -2,14 +2,12 @@ package me.pgp378.p2pparking;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.widget.Toolbar;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -19,7 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class CustomerLoginActivity extends AppCompatActivity {
+public class StudentLoginActivity extends AppCompatActivity {
     private EditText mEmail, mPassword;
     private Button mLogin, mRegistration;
 
@@ -28,27 +26,33 @@ public class CustomerLoginActivity extends AppCompatActivity {
 
     private Boolean loginAttempt = false;
 
+    /*
+    /Login system for user acting as Student who is looking for a ride
+    */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_customer_login);
+        setContentView(R.layout.activity_student_login);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //back button in toolbar
 
         mAuth = FirebaseAuth.getInstance();
 
+        /*
+        /Initializes Authorization listener for firebase
+         */
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user != null) {
-                    Intent intent = new Intent(CustomerLoginActivity.this, CustomerMapActivity.class);
+                    Intent intent = new Intent(StudentLoginActivity.this, StudentMapActivity.class);
                     startActivity(intent);
                     finish();
                     return;
                 } else if (loginAttempt) {
-                    Toast.makeText(CustomerLoginActivity.this, "invalid email entered\ntry again", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(CustomerLoginActivity.this, CustomerLoginActivity.class);
+                    Toast.makeText(StudentLoginActivity.this, "invalid email entered\ntry again", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(StudentLoginActivity.this, StudentLoginActivity.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -62,6 +66,11 @@ public class CustomerLoginActivity extends AppCompatActivity {
         mLogin = (Button) findViewById(R.id.login);
         mRegistration = (Button) findViewById(R.id.registration);
 
+        /*
+        /When register button is tapped.
+        /Takes user inputs and attempts to add to the firebase database.
+        /If add is successful, logs user in and opens map activity.
+         */
         mRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,14 +84,14 @@ public class CustomerLoginActivity extends AppCompatActivity {
 
                 if (temp_email.matches("")) {
                     if (temp_password.length() < 6) {
-                        Toast.makeText(CustomerLoginActivity.this, "password too short\nmust be at least 6 digits", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(StudentLoginActivity.this, "password too short\nmust be at least 6 digits", Toast.LENGTH_SHORT).show();
 
                     }
                     if (temp_email.matches("")) {
-                        Toast.makeText(CustomerLoginActivity.this, "invalid email entered", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(StudentLoginActivity.this, "invalid email entered", Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(CustomerLoginActivity.this, "try again", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(CustomerLoginActivity.this, CustomerLoginActivity.class);
+                    Toast.makeText(StudentLoginActivity.this, "try again", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(StudentLoginActivity.this, StudentLoginActivity.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -91,11 +100,11 @@ public class CustomerLoginActivity extends AppCompatActivity {
                 final String email = temp_email;
                 final String password = temp_password;
 
-                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(CustomerLoginActivity.this, new OnCompleteListener<AuthResult>() {
+                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(StudentLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()) {
-                            Toast.makeText(CustomerLoginActivity.this, "sign up error", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(StudentLoginActivity.this, "sign up error", Toast.LENGTH_SHORT).show();
                         } else if (loginAttempt) {
                             String user_id = mAuth.getCurrentUser().getUid();
                             DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(user_id);
@@ -106,6 +115,11 @@ public class CustomerLoginActivity extends AppCompatActivity {
             }
         });
 
+        /*
+        /Activates when login button is tapped.
+        /Takes user inputs and checks credentials against the firebase database.
+        /If matching credentials are found, user is logged in to map activity.
+         */
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,10 +131,10 @@ public class CustomerLoginActivity extends AppCompatActivity {
 
                 loginAttempt = true;
 
-                if (temp_email.matches("")) {
-                    Toast.makeText(CustomerLoginActivity.this, "invalid email entered", Toast.LENGTH_SHORT).show();
-                    Toast.makeText(CustomerLoginActivity.this, "try again", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(CustomerLoginActivity.this, CustomerLoginActivity.class);
+                if (temp_email.matches("") || temp_password.length() < 1) {
+                    Toast.makeText(StudentLoginActivity.this, "invalid email entered", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(StudentLoginActivity.this, "try again", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(StudentLoginActivity.this, StudentLoginActivity.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -129,11 +143,11 @@ public class CustomerLoginActivity extends AppCompatActivity {
                 final String email = temp_email;
                 final String password = temp_password;
 
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(CustomerLoginActivity.this, new OnCompleteListener<AuthResult>() {
+                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(StudentLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(!task.isSuccessful()) {
-                            Toast.makeText(CustomerLoginActivity.this, "sign in error", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(StudentLoginActivity.this, "sign in error", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -141,20 +155,28 @@ public class CustomerLoginActivity extends AppCompatActivity {
         });
     }
 
+    /*
+    /Turns on firebase listener
+     */
     @Override
     protected  void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(firebaseAuthListener);
     }
 
+    /*
+    /Turns off firebase listener
+     */
     @Override
     protected void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(firebaseAuthListener);
     }
 
+    /*
+    /Back button functionality.
+     */
     private long backPressedTime;
-
     @Override
     public void onBackPressed() {
         if (backPressedTime + 2000 > System.currentTimeMillis()) {
@@ -166,4 +188,3 @@ public class CustomerLoginActivity extends AppCompatActivity {
         backPressedTime = System.currentTimeMillis();
     }
 }
-

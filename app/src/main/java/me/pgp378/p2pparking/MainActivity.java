@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    private Button mDriver, mCustomer;
+    private Button mDriver, mStudent;
 
 
     @Override
@@ -17,7 +17,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mDriver = (Button) findViewById(R.id.driver);
-        mCustomer = (Button) findViewById(R.id.customer);
+        mStudent = (Button) findViewById(R.id.customer);
 
         mDriver.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -31,10 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        mCustomer.setOnClickListener(new View.OnClickListener(){
+        mStudent.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, CustomerLoginActivity.class);
+                Intent intent = new Intent(MainActivity.this, StudentLoginActivity.class);
                 startActivity(intent);
                 finish();
                 return;
