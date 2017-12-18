@@ -103,6 +103,9 @@ public class DriverLoginActivity extends AppCompatActivity {
                 final String email = temp_email;
                 final String password = temp_password;
 
+                /*
+                /Creates user credential entry into firebase.
+                 */
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -146,6 +149,9 @@ public class DriverLoginActivity extends AppCompatActivity {
                 final String email = temp_email;
                 final String password = temp_password;
 
+                /*
+                /Sign in with credentials stored on firebase.
+                 */
                 mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

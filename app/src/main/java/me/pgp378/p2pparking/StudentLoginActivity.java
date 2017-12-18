@@ -100,6 +100,9 @@ public class StudentLoginActivity extends AppCompatActivity {
                 final String email = temp_email;
                 final String password = temp_password;
 
+                /*
+                /User registration command for firebase.
+                 */
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(StudentLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {

@@ -10,7 +10,9 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     private Button mDriver, mStudent;
 
-
+    /*
+    /Constructor for Main page.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -19,6 +21,9 @@ public class MainActivity extends AppCompatActivity {
         mDriver = (Button) findViewById(R.id.driver);
         mStudent = (Button) findViewById(R.id.customer);
 
+        /*
+        /Looking for parking button config.
+         */
         mDriver.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -30,7 +35,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
+        /*
+        /Looking for ride button config.
+         */
         mStudent.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -43,7 +50,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private long backPressedTime;
-
+    /*
+    /Initializes back button command.
+     */
     @Override
     public void onBackPressed() {
         if (backPressedTime + 2000 > System.currentTimeMillis()) {

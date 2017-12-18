@@ -55,6 +55,10 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
     private Marker pickupMarker;
     private Boolean isLoggingOut = false;
 
+    /*
+    /Constructor for student map activity:
+    /User looking for a ride
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         System.out.println("(Inside Customers onCreate");
@@ -72,6 +76,9 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
 
         mLogout = (Button) findViewById(R.id.logout);
         mRequest = (Button) findViewById(R.id.request);
+        /*
+        /Sets up logout button.
+         */
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -85,6 +92,9 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
+        /*
+        /Sets up pick up request button.
+         */
         mRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -154,6 +164,9 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
     private String driverFoundID;
 
     GeoQuery geoQuery;
+    /*
+    /Finds the closest available driver.
+     */
     private void getClosestDriver()
     {
         System.out.println("Inside Customers getClosestDriver");
@@ -183,14 +196,24 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
                     }
                 }
 
+                /*
+                /Unused
+                 */
                 @Override
                 public void onKeyExited(String key) {
                 }
 
+                /*
+                /Unused
+                 */
                 @Override
                 public void onKeyMoved(String key, GeoLocation location) {
                 }
 
+                /*
+                /If driver not found with in radius, then increment radius by one
+                /and try again (recursive).
+                 */
                 @Override
                 public void onGeoQueryReady() {
                     System.out.println("Inside Customers onGeoQueryReady");
@@ -213,10 +236,16 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
     private Marker mDriverMarker;
     private DatabaseReference driverLocationRef;
     private ValueEventListener driverLocationRefListener;
+    /*
+    /Gets location of driver found.
+     */
     private void getDriverLocation() {
         System.out.println("Inside Customers getDriverLocation");
         driverLocationRef = FirebaseDatabase.getInstance().getReference().child("driversWorking").child(driverFoundID).child("l");
         driverLocationRefListener = driverLocationRef.addValueEventListener(new ValueEventListener() {
+            /*
+            /Keeps driver location updated on map.
+             */
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 System.out.println("Inside Customers onDataChange");
@@ -260,6 +289,9 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
                 }
             }
 
+            /*
+            /Unused.
+             */
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 System.out.println("Inside Customers onCancelled");
@@ -267,6 +299,9 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
+    /*
+    /When map is loaded check permissions and initialize.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         System.out.println("(Inside Customers onMapReady");
@@ -278,6 +313,9 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         mMap.setMyLocationEnabled(true);
     }
 
+    /*
+    /Build API client.
+     */
     protected synchronized void buildGoogleApiClient() {
         System.out.println("Inside Customers buildGoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -287,6 +325,9 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         mGoogleApiClient.connect();
     }
 
+    /*
+    /Updates student location upon location change.
+     */
     @Override
     public void onLocationChanged(Location location) {
         System.out.println("Inside Customers onLocationChanged");
@@ -297,7 +338,9 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17)); //1-21, bigger the value the closer the zoom
     }
 
-
+    /*
+    /When client connects configure settings.
+     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         System.out.println("Inside Customers onConnected");
@@ -314,17 +357,26 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
+    /*
+    /Unused.
+     */
     @Override
     public void onConnectionSuspended(int i) {
         System.out.println("Inside Customers onConnectionSuspended");
     }
 
+    /*
+    /Unused.
+     */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         System.out.println("Inside Customers onConnectionFalied");
     }
 
     final int LOCATION_REQUEST_CODE = 1;
+    /*
+    /Asks for permission for GPS access.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         System.out.println("Inside Customers onRequestPermissionsResult");
@@ -341,6 +393,9 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
+    /*
+    /Clears certain data from firebase and ensures app to stop searching
+     */
     private void disconnectCustomer() {
         isLoggingOut = true;
         requestBool = false;
@@ -357,6 +412,10 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         geoFire.removeLocation(userId); //child of information of user stored
     }
 
+    /*
+    /Activates when user stops app abruptly.
+    /Ensures app shuts down processes.
+     */
     @Override
     protected void onStop() {
         System.out.println("Inside Customers onStop");
@@ -369,6 +428,9 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
+    /*
+    /Initializes back button operation.
+     */
     private long backPressedTime;
     /*
     /Activates back-button prompt.

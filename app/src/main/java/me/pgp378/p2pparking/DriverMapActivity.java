@@ -55,6 +55,9 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
     private Boolean isLoggingOut = false;
 
+    /*
+    /Activity constructor.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         System.out.println("Inside onCreate (Driver)");
@@ -73,6 +76,10 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         }
 
         mLogout = (Button) findViewById(R.id.logout);
+
+        /*
+        /Handles logout button.
+         */
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,6 +104,9 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         getAssignedCustomer();
     }
 
+    /*
+    /Retrieves student assigned to driver.
+     */
     private void getAssignedCustomer() {
         System.out.println("Inside getAssignedCustomer (Driver)");
 
@@ -132,6 +142,10 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
     Marker pickupMarker;
     private DatabaseReference assignedCustomerPickupLocationRef;
     private ValueEventListener assignedCustomerPickupLocationRefListener;
+
+    /*
+    /Gets location of assigned customer to update map.
+     */
     private void getAssignedCustomerPickupLocation() {
         System.out.println("Inside getAssignedCustomerPickupLocation (Driver)");
 
@@ -161,14 +175,18 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
                 }
             }
 
+            /*
+            /Not used.
+             */
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                System.out.println("Inside onCancelled (Driver)");
-
             }
         });
     }
 
+    /*
+    /Initializes Google Map object.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         System.out.println("Inside onMapReady (Driver)");
@@ -181,6 +199,9 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         mMap.setMyLocationEnabled(true);
     }
 
+    /*
+    /Build Google Map client.
+     */
     protected synchronized void buildGoogleApiClient() {
         System.out.println("Inside buildGoogleApiClient (Driver)");
 
@@ -224,7 +245,9 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         }
     }
 
-
+    /*
+    /Sets initial settings once client connects to Google Map.
+     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         System.out.println("Inside onConnected (Driver)");
