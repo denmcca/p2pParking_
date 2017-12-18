@@ -139,7 +139,7 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         assignedCustomerPickupLocationRefListener = assignedCustomerPickupLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                System.out.println("Inside onDataVChange (Driver)");
+                System.out.println("Inside onDataChange (Driver)");
 
                 if(dataSnapshot.exists() && !customerId.equals("")) {
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
@@ -204,8 +204,8 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
 
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             System.out.println("userId: " + userId);
-            DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driversAvailable"); //points to main child of drivers avaliable
-            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking"); //points to main child of drivers avaliable
+            DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driversAvailable"); //points to main child of drivers available
+            DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking"); //points to main child of drivers available
             GeoFire geoFireAvailable = new GeoFire(refAvailable);
             GeoFire geoFireWorking = new GeoFire(refWorking);
 
@@ -240,15 +240,26 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
     }
 
+    /*
+    /Unused
+     */
     @Override
     public void onConnectionSuspended(int i) {
     }
 
+    /*
+    /Unused
+     */
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
     }
 
     final int LOCATION_REQUEST_CODE = 1;
+
+    /*
+    /Activates GPS permission request.
+    /Android security measure.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         System.out.println("Inside onRequestPermissionsResult (Driver)");
@@ -266,6 +277,9 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         }
     }
 
+    /*
+    /Removes user-driver from available drivers list.
+     */
     private void disconnectDriver() {
         System.out.println("Inside Driver disconnectDriver");
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -278,8 +292,15 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         System.out.println("completed getting ref from FirebaseDatabase");
         GeoFire geoFire = new GeoFire(ref);
         geoFire.removeLocation(userId); //child of information of user stored
+
+//        ref = FirebaseDatabase.getInstance().getReference("driversWorking");
+//        geoFire = new GeoFire(ref);
+//        geoFire.removeLocation(userId);
     }
 
+    /*
+    /Stops the activity and disconnects driver.
+     */
     @Override
     protected void onStop() {
         System.out.println("Inside onStop (Driver)");
@@ -287,12 +308,14 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         System.out.println("completed super.onStop");
 
         if(!isLoggingOut) {
-
+            disconnectDriver();
         }
     }
 
     private long backPressedTime;
-
+    /*
+    /Activates back-button prompt.
+     */
     @Override
     public void onBackPressed() {
         if (backPressedTime + 2000 > System.currentTimeMillis()) {

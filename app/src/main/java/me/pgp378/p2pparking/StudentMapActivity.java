@@ -53,6 +53,7 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
     private Boolean requestBool = false;
 
     private Marker pickupMarker;
+    private Boolean isLoggingOut = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,8 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isLoggingOut = true;
+                disconnectCustomer();
                 FirebaseAuth.getInstance().signOut();
                 Intent intent = new Intent(StudentMapActivity.this, MainActivity.class);
                 startActivity(intent);
@@ -87,13 +90,17 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
             public void onClick(View view) {
                 System.out.println("Inside Customer onClick (mRequest)");
                 System.out.println("requestBool = " + requestBool);
-                if (requestBool) {
+                if (requestBool) { //if request is already activated, turn off request
                     requestBool = false;
                     System.out.println("driverLocationRefListener = " + driverLocationRefListener);
                     if (driverLocationRef != null) {
                         driverLocationRef.removeEventListener(driverLocationRefListener); //crashing here, null
                     }
                     geoQuery.removeAllListeners();
+
+                    if(mDriverMarker != null) {
+                        mDriverMarker.remove();
+                    }
 
                     if(driverFoundID != null) {
                         DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
@@ -113,7 +120,7 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
                     }
                     mRequest.setText("Request Pickup");
 
-                } else {
+                } else { //if request not active, activate request
                     requestBool = true;
 
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -155,51 +162,52 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         geoQuery = geoFire.queryAtLocation(new GeoLocation(pickupLocation.latitude, pickupLocation.longitude), radius);
         geoQuery.removeAllListeners();
 
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                System.out.println("Inside Customers onKeyEntered");
-                if (!driverFound && requestBool) {
-                    driverFound = true;
-                    System.out.println("DRIVER FOUND: " + driverFound);
-                    driverFoundID = key;
+        if (requestBool) {
+            geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+                @Override
+                public void onKeyEntered(String key, GeoLocation location) {
+                    System.out.println("Inside Customers onKeyEntered");
+                    if (!driverFound && requestBool) { //if driver not found and request activated, look again.
+                        driverFound = true;
+                        System.out.println("DRIVER FOUND: " + driverFound);
+                        driverFoundID = key;
 
-                    DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
-                    String customerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                    HashMap map =  new HashMap();
-                    map.put("customerRideId", customerId);
-                    driverRef.updateChildren(map);
+                        DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
+                        String customerId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        HashMap map = new HashMap();
+                        map.put("customerRideId", customerId);
+                        driverRef.updateChildren(map);
 
-                    getDriverLocation();
-                    mRequest.setText("Looking for Driver Location...");
+                        getDriverLocation();
+                        mRequest.setText("Looking for Driver Location...");
+                    }
                 }
-            }
 
-            @Override
-            public void onKeyExited(String key) {
-            }
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                System.out.println("Inside Customers onGeoQueryReady");
-                System.out.println("driverFound = " + driverFound);
-                if(!driverFound)
-                {
-                    System.out.println("radius =" + radius);
-                    radius++;
-                    getClosestDriver();
+                @Override
+                public void onKeyExited(String key) {
                 }
-            }
 
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-                System.out.println("Inside Customers onGeoQueryError");
-            }
-        });
+                @Override
+                public void onKeyMoved(String key, GeoLocation location) {
+                }
+
+                @Override
+                public void onGeoQueryReady() {
+                    System.out.println("Inside Customers onGeoQueryReady");
+                    System.out.println("driverFound = " + driverFound);
+                    if (!driverFound) {
+                        System.out.println("radius =" + radius);
+                        radius++;
+                        getClosestDriver();
+                    }
+                }
+
+                @Override
+                public void onGeoQueryError(DatabaseError error) {
+                    System.out.println("Inside Customers onGeoQueryError");
+                }
+            });
+        }
     }
 
     private Marker mDriverMarker;
@@ -207,7 +215,7 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
     private ValueEventListener driverLocationRefListener;
     private void getDriverLocation() {
         System.out.println("Inside Customers getDriverLocation");
-        driverLocationRef = FirebaseDatabase.getInstance().getReference().child("driversWorking").child("driverFoundId").child("l");
+        driverLocationRef = FirebaseDatabase.getInstance().getReference().child("driversWorking").child(driverFoundID).child("l");
         driverLocationRefListener = driverLocationRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -333,9 +341,46 @@ public class StudentMapActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
+    private void disconnectCustomer() {
+        isLoggingOut = true;
+        requestBool = false;
+        System.out.println("Inside Customer disconnectCustomer");
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        System.out.println("completed LocationService function");
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); //crashes when logging out of driver mode, addresses in video 14
+        System.out.println("completed FirebaseAuth signOut");
+        System.out.println("completed retrieving userId from FirebaseAuth");
+        System.out.println("userId = " + userId);
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest"); //points to main child of drivers avaliable
+        System.out.println("completed getting ref from FirebaseDatabase");
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(userId); //child of information of user stored
+    }
+
     @Override
     protected void onStop() {
         System.out.println("Inside Customers onStop");
         super.onStop();
+
+        requestBool = false;
+
+        if(!isLoggingOut) {
+            disconnectCustomer();
+        }
+    }
+
+    private long backPressedTime;
+    /*
+    /Activates back-button prompt.
+     */
+    @Override
+    public void onBackPressed() {
+        if (backPressedTime + 2000 > System.currentTimeMillis()) {
+            super.onBackPressed();
+            return;
+        } else {
+            Toast.makeText(getBaseContext(), "Press back again to exit", Toast.LENGTH_SHORT).show();
+        }
+        backPressedTime = System.currentTimeMillis();
     }
 }
